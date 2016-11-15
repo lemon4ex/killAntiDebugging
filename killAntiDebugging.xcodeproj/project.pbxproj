@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		E99906391DDB56E6005C0A72 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E99906381DDB56E6005C0A72 /* Foundation.framework */; };
 		E99906431DDB56E6005C0A72 /* killAntiDebugging.mm in Sources */ = {isa = PBXBuildFile; fileRef = E99906421DDB56E6005C0A72 /* killAntiDebugging.mm */; };
+		E999064E1DDB57C8005C0A72 /* libsubstrate.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E999064D1DDB57C8005C0A72 /* libsubstrate.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		E99906411DDB56E6005C0A72 /* killAntiDebugging-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "killAntiDebugging-Prefix.pch"; sourceTree = "<group>"; };
 		E99906421DDB56E6005C0A72 /* killAntiDebugging.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = killAntiDebugging.mm; sourceTree = "<group>"; };
 		E99906471DDB56E6005C0A72 /* killAntiDebugging.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = killAntiDebugging.plist; path = Package/Library/MobileSubstrate/DynamicLibraries/killAntiDebugging.plist; sourceTree = "<group>"; };
+		E999064D1DDB57C8005C0A72 /* libsubstrate.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsubstrate.dylib; path = ../../../../opt/iOSOpenDev/lib/libsubstrate.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,6 +30,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E99906391DDB56E6005C0A72 /* Foundation.framework in Frameworks */,
+				E999064E1DDB57C8005C0A72 /* libsubstrate.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +57,7 @@
 		E99906371DDB56E6005C0A72 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E999064D1DDB57C8005C0A72 /* libsubstrate.dylib */,
 				E99906381DDB56E6005C0A72 /* Foundation.framework */,
 			);
 			name = Frameworks;
@@ -265,13 +269,18 @@
 		E999064B1DDB56E6005C0A72 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yuankai Chen (W82WR9QJ7V)";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "killAntiDebugging/killAntiDebugging-Prefix.pch";
 				INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/iOSOpenDev/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "bd63608a-df01-48ae-a525-e0a5557d224d";
 				iOSOpenDevBuildPackageOnAnyBuild = NO;
 				iOSOpenDevCopyOnBuild = NO;
 				iOSOpenDevDevice = "";
@@ -285,13 +294,18 @@
 		E999064C1DDB56E6005C0A72 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yuankai Chen (W82WR9QJ7V)";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "killAntiDebugging/killAntiDebugging-Prefix.pch";
 				INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/iOSOpenDev/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "bd63608a-df01-48ae-a525-e0a5557d224d";
 				iOSOpenDevBuildPackageOnAnyBuild = NO;
 				iOSOpenDevCopyOnBuild = NO;
 				iOSOpenDevDevice = "";

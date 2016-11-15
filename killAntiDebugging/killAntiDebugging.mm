@@ -11,7 +11,8 @@
 
 #import <Foundation/Foundation.h>
 #import "CaptainHook/CaptainHook.h"
-#include <notify.h> // not required; for examples only
+#include <sys/sysctl.h>
+#include <substrate.h>
 
 // Objective-C runtime hooking using CaptainHook:
 //   1. declare class using CHDeclareClass()
@@ -19,71 +20,53 @@
 //   3. hook method using CHOptimizedMethod()
 //   4. register hook using CHHook() in CHConstructor
 //   5. (optionally) call old method using CHSuper()
+static int	(*old_sysctl)(int *, u_int, void *, size_t *, void *, size_t);
 
-
-@interface killAntiDebugging : NSObject
-
-@end
-
-@implementation killAntiDebugging
-
--(id)init
+static int	new_sysctl(int *name, u_int namelen, void *oldp, size_t *oldlenp, void *newp, size_t newlen)
 {
-	if ((self = [super init]))
-	{
-	}
-
-    return self;
+    int result = old_sysctl(name,namelen,oldp,oldlenp,newp,newlen);
+    if (*oldlenp == sizeof(struct kinfo_proc)) {
+        struct kinfo_proc *info = (struct kinfo_proc *)oldp;
+        info->kp_proc.p_flag &= ~(P_TRACED);
+    }
+    return result;
 }
 
-@end
-
-
-@class ClassToHook;
-
-CHDeclareClass(ClassToHook); // declare class
-
-CHOptimizedMethod(0, self, void, ClassToHook, messageName) // hook method (with no arguments and no return value)
+static void	 (*old_exit)(int);
+static void	 new_exit(int)
 {
-	// write code here ...
-	
-	CHSuper(0, ClassToHook, messageName); // call old (original) method
+    
 }
 
-CHOptimizedMethod(2, self, BOOL, ClassToHook, arg1, NSString*, value1, arg2, BOOL, value2) // hook method (with 2 arguments and a return value)
+typedef int (*ptr_ptrace_t)(int _request, pid_t _pid, caddr_t _addr, int _data);
+static ptr_ptrace_t old_ptrace;
+static int new_ptrace(int _request, pid_t _pid, caddr_t _addr, int _data)
 {
-	// write code here ...
-
-	return CHSuper(2, ClassToHook, arg1, value1, arg2, value2); // call old (original) method and return its return value
-}
-
-static void WillEnterForeground(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
-	// not required; for example only
-}
-
-static void ExternallyPostedNotification(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
-	// not required; for example only
+    if(_request == 31) //PT_DENY_ATTACH
+    {
+        return 0;
+    }
+    
+    return old_ptrace(_request,_pid,_addr,_data);
 }
 
 CHConstructor // code block that runs immediately upon load
 {
 	@autoreleasepool
 	{
-		// listen for local notification (not required; for example only)
-		CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
-		CFNotificationCenterAddObserver(center, NULL, WillEnterForeground, CFSTR("UIApplicationWillEnterForegroundNotification"), NULL, CFNotificationSuspensionBehaviorCoalesce);
-		
-		// listen for system-side notification (not required; for example only)
-		// this would be posted using: notify_post("net.aigudao.dev.killAntiDebugging.eventname");
-		CFNotificationCenterRef darwin = CFNotificationCenterGetDarwinNotifyCenter();
-		CFNotificationCenterAddObserver(darwin, NULL, ExternallyPostedNotification, CFSTR("net.aigudao.dev.killAntiDebugging.eventname"), NULL, CFNotificationSuspensionBehaviorCoalesce);
-		
-		// CHLoadClass(ClassToHook); // load class (that is "available now")
-		// CHLoadLateClass(ClassToHook);  // load class (that will be "available later")
-		
-		CHHook(0, ClassToHook, messageName); // register hook
-		CHHook(2, ClassToHook, arg1, arg2); // register hook
+        NSLog(@"===============================");
+        NSLog(@"=      killAntiDebugging      =");
+        NSLog(@"=         by lemon4ex         =");
+        NSLog(@"===============================");
+        
+        NSLog(@"Hook sysctl function");
+        MSHookFunction((void *)sysctl, (void *)new_sysctl, (void **)&old_sysctl);
+        NSLog(@"Hook exit function");
+        MSHookFunction((void *)exit, (void *)new_exit, (void **)&old_exit);
+        
+        void* handle = dlopen(0, RTLD_GLOBAL | RTLD_NOW);
+        ptr_ptrace_t ptrace = (ptr_ptrace_t)dlsym(handle, "ptrace");
+        NSLog(@"Hook ptrace function");
+        MSHookFunction((void *)ptrace, (void *)new_ptrace, (void **)&old_ptrace);
 	}
 }

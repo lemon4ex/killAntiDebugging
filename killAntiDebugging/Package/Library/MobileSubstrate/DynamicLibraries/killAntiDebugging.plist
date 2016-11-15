@@ -9,7 +9,9 @@
 		<key>CoreFoundationVersion</key>
 		<array/>
 		<key>Executables</key>
-		<array/>
+		<array>
+			<string>WeChat</string>
+		</array>
 		<key>Bundles</key>
 		<array/>
 	</dict>
