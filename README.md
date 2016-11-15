@@ -1,0 +1,2 @@
+# killAntiDebugging
+一个解除iOS应用中简单的反调试功能的动态库
